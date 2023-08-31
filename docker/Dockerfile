@@ -1,6 +1,8 @@
 # Copyright DataStax, Inc.
 # Please see the included license file for details.
-FROM --platform=${BUILDPLATFORM} maven:3.9.2-eclipse-temurin-8 as builder
+#FROM --platform=${BUILDPLATFORM} maven:3.9.2-eclipse-temurin-8 as builder
+
+FROM --platform=linux/s390x maven:3.6.3-adoptopenjdk-8 as builder
 
 COPY . .
 
@@ -8,9 +10,9 @@ RUN ./gradlew copyDockerBuildCtx
 
 # The datastax base image is not multiarch presently, so we use the openjdk
 # image as our base for arm builds instead.
-FROM --platform=linux/arm64 eclipse-temurin:8u372-b07-jdk as base-arm64
+FROM --platform=linux/s390x eclipse-temurin:8u372-b07-jdk as base-arm64
 
-FROM --platform=linux/amd64 datastax/ds-base-debian-openjdk-8:latest as base-amd64
+FROM --platform=linux/s390x datastax/ds-base-debian-openjdk-8:latest as base-amd64
 
 FROM base-${TARGETARCH} as cass-config-builder
 
