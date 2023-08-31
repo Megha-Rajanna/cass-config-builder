@@ -54,19 +54,19 @@ UBI_ARGS=(
 docker buildx build --load \
   "${GH_UBI_TAGS[@]}" \
   "${UBI_ARGS[@]}" \
-  --platform linux/amd64 \
+  --platform linux/amd64,linux/s390x \
   .
 
 docker buildx build --load \
   "${GH_ARM64_TAGS[@]}" \
   "${STANDARD_ARGS[@]}" \
-  --platform linux/arm64 \
+  --platform linux/arm64,linux/s390x \
   .
 
 docker buildx build --load \
   "${GH_TAGS[@]}" \
   "${STANDARD_ARGS[@]}" \
-  --platform linux/amd64 \
+  --platform linux/amd64,linux/s390x \
   .
 
 TAGS_TO_PUSH=("${GH_ARM64_TAGS[@]}" "${GH_TAGS[@]}" "${GH_UBI_TAGS[@]}")
