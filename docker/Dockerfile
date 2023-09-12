@@ -4,15 +4,17 @@
 
 FROM --platform=linux/s390x maven:3.6.3-adoptopenjdk-8 as builder
 
+ENV PRODUCT_NAME cassandra 
+
 COPY . .
 
 RUN ./gradlew copyDockerBuildCtx
 
 # The datastax base image is not multiarch presently, so we use the openjdk
 # image as our base for arm builds instead.
-FROM --platform=linux/s390x eclipse-temurin:8u372-b07-jdk as base-arm64
+FROM --platform=linux/s390x eclipse-temurin:8u372-b07-jdk as base-s390x
 
-FROM --platform=linux/s390x datastax/ds-base-debian-openjdk-8:latest as base-amd64
+FROM --platform=linux/s390x datastax/ds-base-debian-openjdk-8:latest as base-s390x
 
 FROM base-${TARGETARCH} as cass-config-builder
 
@@ -37,6 +39,8 @@ ENTRYPOINT ["/usr/local/bin/entrypoint"]
 USER ${USER_UID}
 
 FROM registry.access.redhat.com/ubi7/ubi-minimal:7.9 AS builder-ubi
+
+ENV PRODUCT_VERSION "4.7.0"
 
 # Update the builder packages and create user
 RUN microdnf update && rm -rf /var/cache/yum && \
